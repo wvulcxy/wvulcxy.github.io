@@ -1,51 +1,32 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Electralog - Redirecting...</title>
-    <style>
-        body { font-family: sans-serif; text-align: center; padding: 48px 24px; }
-        p { color: #5C5E62; }
-        a { display: inline-block; margin-top: 16px; padding: 14px 32px;
-            background: #E82127; color: #fff; text-decoration: none;
-            border-radius: 8px; font-size: 16px; }
-    </style>
-</head>
-<body>
-    <p>正在跳转到 Electralog...</p>
-    <p style="font-size:14px;">如果没有自动跳转，请点击下方按钮：</p>
-    <a id="fallback" href="#">打开 Electralog</a>
-    <script>
-        (function() {
-            var url = window.location.href;
-            var params = '';
-            if (url.includes('?')) params = url.split('?')[1];
-
-            var code = new URLSearchParams(params).get('code') || '';
-            var state = new URLSearchParams(params).get('state') || '';
-
-            if (!code) {
-                document.body.innerHTML = '<p style="color:red;">错误：未收到授权码<br>请返回重试</p>';
-                return;
-            }
-
-            var query = 'code=' + encodeURIComponent(code);
-            if (state) query += '&state=' + encodeURIComponent(state);
-
-            // 方案 A: 自定义 scheme（通用）
-            var schemeUrl = 'electralog://callback?' + query;
-
-            // 方案 B: Chrome intent://（Chrome 更可靠）
-            var intentUrl = 'intent://callback?' + query +
-                '#Intent;scheme=electralog;package=com.electralog;end';
-
-            var link = document.getElementById('fallback');
-            link.href = schemeUrl;
-
-            // 先尝试 intent://（Chrome 优先），失败则用 scheme
-            var isChrome = /Chrome/i.test(navigator.userAgent);
-            window.location.replace(isChrome ? intentUrl : schemeUrl);
-        })();
-    </script>
-</body>
-</html>
+  <html>
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>返回 Electralog</title>
+      <style>
+          body { font-family: sans-serif; text-align: center; padding: 48px
+  24px; }
+          a { display: inline-block; margin-top: 12px; padding: 14px 32px;
+              background: #E82127; color: #fff; text-decoration: none;
+              border-radius: 8px; font-size: 16px; }
+          code { word-break: break-all; font-size: 12px; color: #5C5E62; }
+      </style>
+  </head>
+  <body>
+      <p>登录成功</p>
+      <p><code id="c"></code></p>
+      <a id="btn" href="#">打开 Electralog</a>
+      <script>
+          var code = new URLSearchParams(window.location.search).get('code');
+          document.getElementById('c').textContent = 'code: ' + (code ?
+  code.substring(0,12)+'...' : '无');
+          if (code) {
+              var url = 'intent://callback?code=' + encodeURIComponent(code) +
+                        '#Intent;scheme=electralog;package=com.electralog;end';
+              document.getElementById('btn').href = url;
+              window.location = url;
+          }
+      </script>
+  </body>
+  </html>
