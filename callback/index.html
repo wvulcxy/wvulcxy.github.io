@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Electralog - Redirecting...</title>
+</head>
+<body>
+    <p>Redirecting to Electralog...</p>
+    <a id="fallback" href="#" style="display:none;font-size:18px;padding:16px;">
+        Open Electralog App
+    </a>
+    <script>
+        (function() {
+            var url = window.location.href;
+            // Tesla returns code in the URL fragment or query
+            // Try query first, then fragment
+            var params = url.includes('?') ? url.split('?')[1] : '';
+            if (!params && url.includes('#')) {
+                params = url.split('#')[1];
+            }
+            var redirect = 'electralog://callback?' + params;
+
+            // Try automatic redirect
+            window.location.replace(redirect);
+
+            // Fallback: show manual button after 2 seconds
+            setTimeout(function() {
+                var link = document.getElementById('fallback');
+                link.href = redirect;
+                link.style.display = 'block';
+            }, 2000);
+        })();
+    </script>
+</body>
+</html>
